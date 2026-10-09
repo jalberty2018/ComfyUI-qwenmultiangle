@@ -95,25 +95,26 @@ const emit = defineEmits<{
 
 const azimuthOptions: DropdownOption[] = [
   { key: 'frontView', value: 0 },
-  { key: 'frontRightQuarterView', value: 45 },
+  { key: 'frontRightView', value: 30 },
+  { key: 'frontRightQuarterView', value: 60 },
   { key: 'rightSideView', value: 90 },
-  { key: 'backRightQuarterView', value: 135 },
+  { key: 'backRightQuarterView', value: 120 },
+  { key: 'backRightView', value: 150 },
   { key: 'backView', value: 180 },
-  { key: 'backLeftQuarterView', value: 225 },
+  { key: 'backLeftView', value: 210 },
+  { key: 'backLeftQuarterView', value: 240 },
   { key: 'leftSideView', value: 270 },
-  { key: 'frontLeftQuarterView', value: 315 }
+  { key: 'frontLeftQuarterView', value: 300 },
+  { key: 'frontLeftView', value: 330 }
 ]
-
 const elevationOptions: DropdownOption[] = [
-  { key: 'lowAngleShot', value: -30 },
   { key: 'eyeLevelShot', value: 0 },
   { key: 'elevatedShot', value: 30 },
-  { key: 'highAngleShot', value: 60 }
+  { key: 'highAngleShot', value: 60 },
+  { key: 'topDownShot', value: 90 }
 ]
-
 const distanceOptions: DropdownOption[] = [
-  { key: 'wideShot', value: 1 },
-  { key: 'mediumShot', value: 4 },
+  { key: 'standardFraming', value: 4 },
   { key: 'closeUp', value: 8 }
 ]
 
@@ -125,7 +126,7 @@ function findClosestOption(value: number, options: DropdownOption[], isAzimuth =
     if (isAzimuth) {
       diff = Math.min(diff, Math.abs(value - opt.value - 360), Math.abs(value - opt.value + 360))
     }
-    if (diff < minDiff) {
+    if (diff <= minDiff) {
       minDiff = diff
       closest = opt.value
     }
@@ -134,12 +135,11 @@ function findClosestOption(value: number, options: DropdownOption[], isAzimuth =
 }
 
 function findClosestDistanceOption(dist: number): number {
-  if (dist < 2) return 1
   if (dist < 6) return 4
   return 8
 }
 
-const closestAzimuth = computed(() => findClosestOption(props.azimuth, azimuthOptions, true))
+const closestAzimuth = computed(() => (Math.floor((props.azimuth + 15) / 30) % 12) * 30)
 const closestElevation = computed(() => findClosestOption(props.elevation, elevationOptions))
 const closestDistance = computed(() => findClosestDistanceOption(props.distance))
 

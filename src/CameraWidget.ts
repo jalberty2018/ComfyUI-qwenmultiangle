@@ -61,7 +61,7 @@ export class CameraWidget {
     this.onStateChange = options.onStateChange
     this.state = {
       azimuth: options.initialState?.azimuth ?? 0,
-      elevation: options.initialState?.elevation ?? 0,
+      elevation: Math.max(0, Math.min(90, options.initialState?.elevation ?? 0)),
       distance: options.initialState?.distance ?? 5,
       imageUrl: options.initialState?.imageUrl ?? null
     }
@@ -248,7 +248,7 @@ export class CameraWidget {
   private createElevationArc(): void {
     const arcPoints: THREE.Vector3[] = []
     for (let i = 0; i <= 32; i++) {
-      const angle = (-30 + (90 * i / 32)) * Math.PI / 180
+      const angle = (90 * i / 32) * Math.PI / 180
       arcPoints.push(new THREE.Vector3(
         this.ELEV_ARC_X,
         this.ELEVATION_RADIUS * Math.sin(angle) + this.CENTER.y,
@@ -448,7 +448,7 @@ export class CameraWidget {
       this.state.azimuth = Math.round(this.liveAzimuth)
 
       let newElevation = this.orbitStartElevation + deltaY * sensitivity
-      newElevation = Math.max(-30, Math.min(60, newElevation))
+      newElevation = Math.max(0, Math.min(90, newElevation))
       this.liveElevation = newElevation
       this.state.elevation = Math.round(this.liveElevation)
 
@@ -508,7 +508,7 @@ export class CameraWidget {
         const relY = intersect.y - this.CENTER.y
         const relZ = intersect.z
         let angle = Math.atan2(relY, relZ) * (180 / Math.PI)
-        angle = Math.max(-30, Math.min(60, angle))
+        angle = Math.max(0, Math.min(90, angle))
         this.liveElevation = angle
         this.state.elevation = Math.round(this.liveElevation)
         this.updateVisuals()
@@ -589,48 +589,11 @@ export class CameraWidget {
   }
 
   public generatePrompt(): string {
-    const hAngle = this.state.azimuth % 360
-
-    let hDirection: string
-    if (hAngle < 22.5 || hAngle >= 337.5) {
-      hDirection = "front view"
-    } else if (hAngle < 67.5) {
-      hDirection = "front-right quarter view"
-    } else if (hAngle < 112.5) {
-      hDirection = "right side view"
-    } else if (hAngle < 157.5) {
-      hDirection = "back-right quarter view"
-    } else if (hAngle < 202.5) {
-      hDirection = "back view"
-    } else if (hAngle < 247.5) {
-      hDirection = "back-left quarter view"
-    } else if (hAngle < 292.5) {
-      hDirection = "left side view"
-    } else {
-      hDirection = "front-left quarter view"
-    }
-
-    let vDirection: string
-    if (this.state.elevation < -15) {
-      vDirection = "low-angle shot"
-    } else if (this.state.elevation < 15) {
-      vDirection = "eye-level shot"
-    } else if (this.state.elevation < 45) {
-      vDirection = "elevated shot"
-    } else {
-      vDirection = "high-angle shot"
-    }
-
-    let distance: string
-    if (this.state.distance < 2) {
-      distance = "wide shot"
-    } else if (this.state.distance < 6) {
-      distance = "medium shot"
-    } else {
-      distance = "close-up"
-    }
-
-    return `<sks> ${hDirection} ${vDirection} ${distance}`
+    const azimuths = ["front view","front-right view","front-right quarter view","right side view","back-right quarter view","back-right view","back view","back-left view","back-left quarter view","left side view","front-left quarter view","front-left view"]
+    const elevations = ["eye-level shot","elevated shot","high-angle shot","top-down shot"]
+    const h = Math.floor((Math.max(0, Math.min(360, this.state.azimuth)) + 15) / 30) % 12
+    const v = Math.min(3, Math.floor((Math.max(0, this.state.elevation) + 15) / 30))
+    return `<mva> ${azimuths[h]}, ${elevations[v]}${this.state.distance >= 6 ? ' close-up' : ''}`
   }
 
   public setState(newState: Partial<CameraState>): void {
@@ -639,8 +602,8 @@ export class CameraWidget {
       this.liveAzimuth = newState.azimuth
     }
     if (newState.elevation !== undefined) {
-      this.state.elevation = newState.elevation
-      this.liveElevation = newState.elevation
+      this.state.elevation = Math.max(0, Math.min(90, newState.elevation))
+      this.liveElevation = this.state.elevation
     }
     if (newState.distance !== undefined) {
       this.state.distance = newState.distance

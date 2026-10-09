@@ -10,7 +10,7 @@ export function useCameraWidget(
   const elevation = ref(initialState.elevation ?? 0)
   const distance = ref(initialState.distance ?? 5)
   const imageUrl = ref<string | null>(null)
-  const prompt = ref('<sks> front view eye-level shot medium shot')
+  const prompt = ref('<mva> front view, eye-level shot')
 
   let widget: CameraWidget | null = null
   let updatingFromWidget = false

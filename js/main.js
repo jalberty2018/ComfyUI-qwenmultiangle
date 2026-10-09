@@ -6169,7 +6169,7 @@ const _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const SceneCanvas = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-4c8e1dc6"]]);
+const SceneCanvas = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-dd53d66d"]]);
 const { app: app$1 } = window.comfyAPI.app;
 const translations = {
   en: {
@@ -6192,14 +6192,17 @@ const translations = {
     backLeftQuarterView: "back-left quarter view",
     leftSideView: "left side view",
     frontLeftQuarterView: "front-left quarter view",
+    frontRightView: "front-right view",
+    backRightView: "back-right view",
+    backLeftView: "back-left view",
+    frontLeftView: "front-left view",
     // Elevation options
-    lowAngleShot: "low-angle shot",
+    topDownShot: "top-down shot",
     eyeLevelShot: "eye-level shot",
     elevatedShot: "elevated shot",
     highAngleShot: "high-angle shot",
     // Distance options
-    wideShot: "wide shot",
-    mediumShot: "medium shot",
+    standardFraming: "standard framing",
     closeUp: "close-up"
   },
   zh: {
@@ -6222,14 +6225,17 @@ const translations = {
     backLeftQuarterView: "左后方视角",
     leftSideView: "左侧视角",
     frontLeftQuarterView: "左前方视角",
+    frontRightView: "右前视角",
+    backRightView: "右后视角",
+    backLeftView: "左后视角",
+    frontLeftView: "左前视角",
     // Elevation options
-    lowAngleShot: "仰拍",
+    topDownShot: "顶视图",
     eyeLevelShot: "平视",
     elevatedShot: "高角度",
     highAngleShot: "俯拍",
     // Distance options
-    wideShot: "远景",
-    mediumShot: "中景",
+    standardFraming: "标准构图",
     closeUp: "特写"
   },
   ja: {
@@ -6252,14 +6258,17 @@ const translations = {
     backLeftQuarterView: "左後方",
     leftSideView: "左側面",
     frontLeftQuarterView: "左前方",
+    frontRightView: "右斜め前",
+    backRightView: "右斜め後ろ",
+    backLeftView: "左斜め後ろ",
+    frontLeftView: "左斜め前",
     // Elevation options
-    lowAngleShot: "ローアングル",
+    topDownShot: "真上から",
     eyeLevelShot: "アイレベル",
     elevatedShot: "ハイアングル",
     highAngleShot: "俯瞰",
     // Distance options
-    wideShot: "ワイドショット",
-    mediumShot: "ミディアムショット",
+    standardFraming: "標準フレーミング",
     closeUp: "クローズアップ"
   },
   ko: {
@@ -6282,14 +6291,17 @@ const translations = {
     backLeftQuarterView: "좌측 후방",
     leftSideView: "좌측면",
     frontLeftQuarterView: "좌측 전방",
+    frontRightView: "우측 앞",
+    backRightView: "우측 뒤",
+    backLeftView: "좌측 뒤",
+    frontLeftView: "좌측 앞",
     // Elevation options
-    lowAngleShot: "로우 앵글",
+    topDownShot: "탑다운",
     eyeLevelShot: "아이 레벨",
     elevatedShot: "하이 앵글",
     highAngleShot: "부감",
     // Distance options
-    wideShot: "와이드 샷",
-    mediumShot: "미디엄 샷",
+    standardFraming: "기본 구도",
     closeUp: "클로즈업"
   }
 };
@@ -6379,23 +6391,26 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
     const emit2 = __emit;
     const azimuthOptions = [
       { key: "frontView", value: 0 },
-      { key: "frontRightQuarterView", value: 45 },
+      { key: "frontRightView", value: 30 },
+      { key: "frontRightQuarterView", value: 60 },
       { key: "rightSideView", value: 90 },
-      { key: "backRightQuarterView", value: 135 },
+      { key: "backRightQuarterView", value: 120 },
+      { key: "backRightView", value: 150 },
       { key: "backView", value: 180 },
-      { key: "backLeftQuarterView", value: 225 },
+      { key: "backLeftView", value: 210 },
+      { key: "backLeftQuarterView", value: 240 },
       { key: "leftSideView", value: 270 },
-      { key: "frontLeftQuarterView", value: 315 }
+      { key: "frontLeftQuarterView", value: 300 },
+      { key: "frontLeftView", value: 330 }
     ];
     const elevationOptions = [
-      { key: "lowAngleShot", value: -30 },
       { key: "eyeLevelShot", value: 0 },
       { key: "elevatedShot", value: 30 },
-      { key: "highAngleShot", value: 60 }
+      { key: "highAngleShot", value: 60 },
+      { key: "topDownShot", value: 90 }
     ];
     const distanceOptions = [
-      { key: "wideShot", value: 1 },
-      { key: "mediumShot", value: 4 },
+      { key: "standardFraming", value: 4 },
       { key: "closeUp", value: 8 }
     ];
     function findClosestOption(value, options, isAzimuth = false) {
@@ -6406,7 +6421,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
         if (isAzimuth) {
           diff = Math.min(diff, Math.abs(value - opt.value - 360), Math.abs(value - opt.value + 360));
         }
-        if (diff < minDiff) {
+        if (diff <= minDiff) {
           minDiff = diff;
           closest = opt.value;
         }
@@ -6414,11 +6429,10 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       return closest;
     }
     function findClosestDistanceOption(dist) {
-      if (dist < 2) return 1;
       if (dist < 6) return 4;
       return 8;
     }
-    const closestAzimuth = computed(() => findClosestOption(props.azimuth, azimuthOptions, true));
+    const closestAzimuth = computed(() => Math.floor((props.azimuth + 15) / 30) % 12 * 30);
     const closestElevation = computed(() => findClosestOption(props.elevation, elevationOptions));
     const closestDistance = computed(() => findClosestDistanceOption(props.distance));
     function onAzimuthSelect(e) {
@@ -6499,7 +6513,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const ControlPanel = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-b0acfc84"]]);
+const ControlPanel = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-20073775"]]);
 /**
  * @license
  * Copyright 2010-2024 Three.js Authors
@@ -26615,7 +26629,7 @@ class CameraWidget {
     this.onStateChange = options.onStateChange;
     this.state = {
       azimuth: ((_a = options.initialState) == null ? void 0 : _a.azimuth) ?? 0,
-      elevation: ((_b = options.initialState) == null ? void 0 : _b.elevation) ?? 0,
+      elevation: Math.max(0, Math.min(90, ((_b = options.initialState) == null ? void 0 : _b.elevation) ?? 0)),
       distance: ((_c = options.initialState) == null ? void 0 : _c.distance) ?? 5,
       imageUrl: ((_d = options.initialState) == null ? void 0 : _d.imageUrl) ?? null
     };
@@ -26773,7 +26787,7 @@ class CameraWidget {
   createElevationArc() {
     const arcPoints = [];
     for (let i = 0; i <= 32; i++) {
-      const angle = (-30 + 90 * i / 32) * Math.PI / 180;
+      const angle = 90 * i / 32 * Math.PI / 180;
       arcPoints.push(new Vector3(
         this.ELEV_ARC_X,
         this.ELEVATION_RADIUS * Math.sin(angle) + this.CENTER.y,
@@ -26940,7 +26954,7 @@ class CameraWidget {
       this.liveAzimuth = newAzimuth;
       this.state.azimuth = Math.round(this.liveAzimuth);
       let newElevation = this.orbitStartElevation + deltaY * sensitivity;
-      newElevation = Math.max(-30, Math.min(60, newElevation));
+      newElevation = Math.max(0, Math.min(90, newElevation));
       this.liveElevation = newElevation;
       this.state.elevation = Math.round(this.liveElevation);
       this.updateVisuals();
@@ -26992,7 +27006,7 @@ class CameraWidget {
         const relY = intersect2.y - this.CENTER.y;
         const relZ = intersect2.z;
         let angle = Math.atan2(relY, relZ) * (180 / Math.PI);
-        angle = Math.max(-30, Math.min(60, angle));
+        angle = Math.max(0, Math.min(90, angle));
         this.liveElevation = angle;
         this.state.elevation = Math.round(this.liveElevation);
         this.updateVisuals();
@@ -27059,44 +27073,11 @@ class CameraWidget {
     }
   }
   generatePrompt() {
-    const hAngle = this.state.azimuth % 360;
-    let hDirection;
-    if (hAngle < 22.5 || hAngle >= 337.5) {
-      hDirection = "front view";
-    } else if (hAngle < 67.5) {
-      hDirection = "front-right quarter view";
-    } else if (hAngle < 112.5) {
-      hDirection = "right side view";
-    } else if (hAngle < 157.5) {
-      hDirection = "back-right quarter view";
-    } else if (hAngle < 202.5) {
-      hDirection = "back view";
-    } else if (hAngle < 247.5) {
-      hDirection = "back-left quarter view";
-    } else if (hAngle < 292.5) {
-      hDirection = "left side view";
-    } else {
-      hDirection = "front-left quarter view";
-    }
-    let vDirection;
-    if (this.state.elevation < -15) {
-      vDirection = "low-angle shot";
-    } else if (this.state.elevation < 15) {
-      vDirection = "eye-level shot";
-    } else if (this.state.elevation < 45) {
-      vDirection = "elevated shot";
-    } else {
-      vDirection = "high-angle shot";
-    }
-    let distance;
-    if (this.state.distance < 2) {
-      distance = "wide shot";
-    } else if (this.state.distance < 6) {
-      distance = "medium shot";
-    } else {
-      distance = "close-up";
-    }
-    return `<sks> ${hDirection} ${vDirection} ${distance}`;
+    const azimuths = ["front view", "front-right view", "front-right quarter view", "right side view", "back-right quarter view", "back-right view", "back view", "back-left view", "back-left quarter view", "left side view", "front-left quarter view", "front-left view"];
+    const elevations = ["eye-level shot", "elevated shot", "high-angle shot", "top-down shot"];
+    const h = Math.floor((Math.max(0, Math.min(360, this.state.azimuth)) + 15) / 30) % 12;
+    const v = Math.min(3, Math.floor((Math.max(0, this.state.elevation) + 15) / 30));
+    return `<mva> ${azimuths[h]}, ${elevations[v]}${this.state.distance >= 6 ? " close-up" : ""}`;
   }
   setState(newState) {
     if (newState.azimuth !== void 0) {
@@ -27104,8 +27085,8 @@ class CameraWidget {
       this.liveAzimuth = newState.azimuth;
     }
     if (newState.elevation !== void 0) {
-      this.state.elevation = newState.elevation;
-      this.liveElevation = newState.elevation;
+      this.state.elevation = Math.max(0, Math.min(90, newState.elevation));
+      this.liveElevation = this.state.elevation;
     }
     if (newState.distance !== void 0) {
       this.state.distance = newState.distance;
@@ -27235,7 +27216,7 @@ function useCameraWidget(initialState = {}, onExternalStateChange) {
   const elevation = ref(initialState.elevation ?? 0);
   const distance = ref(initialState.distance ?? 5);
   const imageUrl = ref(null);
-  const prompt = ref("<sks> front view eye-level shot medium shot");
+  const prompt = ref("<mva> front view, eye-level shot");
   let widget = null;
   let updatingFromWidget = false;
   let updatingFromExternal = false;
@@ -27362,7 +27343,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-7061782c"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-c117047e"]]);
 const { app } = window.comfyAPI.app;
 const { api } = window.comfyAPI.api;
 (() => {

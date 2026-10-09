@@ -23,14 +23,17 @@ export interface Translations {
   backLeftQuarterView: string
   leftSideView: string
   frontLeftQuarterView: string
+  frontRightView: string
+  backRightView: string
+  backLeftView: string
+  frontLeftView: string
   // Elevation options
-  lowAngleShot: string
+  topDownShot: string
   eyeLevelShot: string
   elevatedShot: string
   highAngleShot: string
   // Distance options
-  wideShot: string
-  mediumShot: string
+  standardFraming: string
   closeUp: string
 }
 
@@ -55,14 +58,17 @@ const translations: Record<Locale, Translations> = {
     backLeftQuarterView: 'back-left quarter view',
     leftSideView: 'left side view',
     frontLeftQuarterView: 'front-left quarter view',
+    frontRightView: 'front-right view',
+    backRightView: 'back-right view',
+    backLeftView: 'back-left view',
+    frontLeftView: 'front-left view',
     // Elevation options
-    lowAngleShot: 'low-angle shot',
+    topDownShot: 'top-down shot',
     eyeLevelShot: 'eye-level shot',
     elevatedShot: 'elevated shot',
     highAngleShot: 'high-angle shot',
     // Distance options
-    wideShot: 'wide shot',
-    mediumShot: 'medium shot',
+    standardFraming: 'standard framing',
     closeUp: 'close-up'
   },
   zh: {
@@ -85,14 +91,17 @@ const translations: Record<Locale, Translations> = {
     backLeftQuarterView: '左后方视角',
     leftSideView: '左侧视角',
     frontLeftQuarterView: '左前方视角',
+    frontRightView: '右前视角',
+    backRightView: '右后视角',
+    backLeftView: '左后视角',
+    frontLeftView: '左前视角',
     // Elevation options
-    lowAngleShot: '仰拍',
+    topDownShot: '顶视图',
     eyeLevelShot: '平视',
     elevatedShot: '高角度',
     highAngleShot: '俯拍',
     // Distance options
-    wideShot: '远景',
-    mediumShot: '中景',
+    standardFraming: '标准构图',
     closeUp: '特写'
   },
   ja: {
@@ -115,14 +124,17 @@ const translations: Record<Locale, Translations> = {
     backLeftQuarterView: '左後方',
     leftSideView: '左側面',
     frontLeftQuarterView: '左前方',
+    frontRightView: '右斜め前',
+    backRightView: '右斜め後ろ',
+    backLeftView: '左斜め後ろ',
+    frontLeftView: '左斜め前',
     // Elevation options
-    lowAngleShot: 'ローアングル',
+    topDownShot: '真上から',
     eyeLevelShot: 'アイレベル',
     elevatedShot: 'ハイアングル',
     highAngleShot: '俯瞰',
     // Distance options
-    wideShot: 'ワイドショット',
-    mediumShot: 'ミディアムショット',
+    standardFraming: '標準フレーミング',
     closeUp: 'クローズアップ'
   },
   ko: {
@@ -145,14 +157,17 @@ const translations: Record<Locale, Translations> = {
     backLeftQuarterView: '좌측 후방',
     leftSideView: '좌측면',
     frontLeftQuarterView: '좌측 전방',
+    frontRightView: '우측 앞',
+    backRightView: '우측 뒤',
+    backLeftView: '좌측 뒤',
+    frontLeftView: '좌측 앞',
     // Elevation options
-    lowAngleShot: '로우 앵글',
+    topDownShot: '탑다운',
     eyeLevelShot: '아이 레벨',
     elevatedShot: '하이 앵글',
     highAngleShot: '부감',
     // Distance options
-    wideShot: '와이드 샷',
-    mediumShot: '미디엄 샷',
+    standardFraming: '기본 구도',
     closeUp: '클로즈업'
   }
 }

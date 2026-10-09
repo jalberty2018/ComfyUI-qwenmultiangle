@@ -34,14 +34,16 @@ CAMERA_GLOSSARY: dict[str, dict[str, str]] = {
     "back-left quarter view":   {"zh": "左后方视角", "ja": "左後方", "ko": "좌측 후방"},
     "left side view":           {"zh": "左侧视角", "ja": "左側面",   "ko": "좌측면"},
     "front-left quarter view":  {"zh": "左前方视角", "ja": "左前方", "ko": "좌측 전방"},
+    "front-right view": {"zh": "右前视角", "ja": "右斜め前", "ko": "우측 앞"},
+    "back-right view": {"zh": "右后视角", "ja": "右斜め後ろ", "ko": "우측 뒤"},
+    "back-left view": {"zh": "左后视角", "ja": "左斜め後ろ", "ko": "좌측 뒤"},
+    "front-left view": {"zh": "左前视角", "ja": "左斜め前", "ko": "좌측 앞"},
+    "top-down shot": {"zh": "顶视图", "ja": "真上から", "ko": "탑다운"},
     # Elevation / vertical direction
-    "low-angle shot":           {"zh": "仰拍",   "ja": "ローアングル", "ko": "로우 앵글"},
     "eye-level shot":           {"zh": "平视",   "ja": "アイレベル",   "ko": "아이 레벨"},
     "elevated shot":            {"zh": "高角度", "ja": "ハイアングル", "ko": "하이 앵글"},
     "high-angle shot":          {"zh": "俯拍",   "ja": "俯瞰",         "ko": "부감"},
     # Distance / shot size
-    "wide shot":                {"zh": "远景",   "ja": "ワイドショット",   "ko": "와이드 샷"},
-    "medium shot":              {"zh": "中景",   "ja": "ミディアムショット", "ko": "미디엄 샷"},
     "close-up":                 {"zh": "特写",   "ja": "クローズアップ",   "ko": "클로즈업"},
 }
 

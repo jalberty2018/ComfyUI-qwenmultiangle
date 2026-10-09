@@ -6,13 +6,10 @@ A 3D camera control node that outputs angle prompts
 from __future__ import annotations
 
 import math
-import os
 
-import numpy as np
-from PIL import Image
 
-import folder_paths
-from comfy_api.latest import ComfyExtension, io, UI
+from .lora import ensure_lora
+from comfy_api.latest import ComfyExtension, io
 from comfy_api.latest._io import _UIOutput, FolderType
 from comfy_api.latest._ui import ImageSaveHelper, SavedResult
 from typing_extensions import override
@@ -80,9 +77,9 @@ class QwenMultiangleCameraNode(io.ComfyNode):
                 ),
                 io.Int.Input(
                     "vertical_angle",
-                    default=0, min=-30, max=60, step=1,
+                    default=0, min=0, max=90, step=1,
                     display_name="Vertical Angle",
-                    tooltip="Camera elevation angle (-30° to 60°)",
+                    tooltip="Camera elevation angle (0° to 90°)",
                 ),
                 io.Float.Input(
                     "zoom",
@@ -126,45 +123,15 @@ class QwenMultiangleCameraNode(io.ComfyNode):
         image=None,
     ) -> io.NodeOutput:
         horizontal_angle = max(0, min(360, int(horizontal_angle)))
-        vertical_angle = max(-30, min(60, int(vertical_angle)))
+        vertical_angle = max(0, min(90, int(vertical_angle)))
         zoom = max(0.0, min(10.0, float(zoom)))
 
-        h_angle = horizontal_angle % 360
-
-        if h_angle < 22.5 or h_angle >= 337.5:
-            h_direction = "front view"
-        elif h_angle < 67.5:
-            h_direction = "front-right quarter view"
-        elif h_angle < 112.5:
-            h_direction = "right side view"
-        elif h_angle < 157.5:
-            h_direction = "back-right quarter view"
-        elif h_angle < 202.5:
-            h_direction = "back view"
-        elif h_angle < 247.5:
-            h_direction = "back-left quarter view"
-        elif h_angle < 292.5:
-            h_direction = "left side view"
-        else:
-            h_direction = "front-left quarter view"
-
-        if vertical_angle < -15:
-            v_direction = "low-angle shot"
-        elif vertical_angle < 15:
-            v_direction = "eye-level shot"
-        elif vertical_angle < 45:
-            v_direction = "elevated shot"
-        else:
-            v_direction = "high-angle shot"
-
-        if zoom < 2:
-            distance = "wide shot"
-        elif zoom < 6:
-            distance = "medium shot"
-        else:
-            distance = "close-up"
-
-        prompt = f"<sks> {h_direction} {v_direction} {distance}"
+        azimuths = ["front view","front-right view","front-right quarter view","right side view","back-right quarter view","back-right view","back view","back-left view","back-left quarter view","left side view","front-left quarter view","front-left view"]
+        elevations = ["eye-level shot","elevated shot","high-angle shot","top-down shot"]
+        h_direction = azimuths[((horizontal_angle + 15) // 30) % 12]
+        v_direction = elevations[min(3, (vertical_angle + 15) // 30)]
+        close_up = " close-up" if zoom >= 6 else ""
+        prompt = f"<mva> {h_direction}, {v_direction}{close_up}"
 
         # Save image to temp file for the frontend 3D widget
         ui_results: list[SavedResult] = []
@@ -251,11 +218,40 @@ class QwenMultiangleCameraTranslateNode(io.ComfyNode):
         return io.NodeOutput(translated)
 
 
+class QwenMultiangleLoraLoader(io.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        return io.Schema(
+            node_id="QwenMultiangleLoraLoader",
+            display_name="Qwen Image 2.1 Multiple Angles LoRA",
+            category="image/multiangle",
+            description="Loads the akhaliq Qwen Image 2.1 v2 camera LoRA; downloads it from Hugging Face if missing. Use a Qwen Image 2.1 MODEL.",
+            inputs=[
+                io.Model.Input("model"),
+                io.Float.Input("strength_model", default=1.0, min=0.0, max=2.0, step=0.05),
+            ],
+            outputs=[io.Model.Output("model")],
+        )
+
+    @classmethod
+    def execute(cls, model, strength_model=1.0):
+        if strength_model == 0:
+            return io.NodeOutput(model)
+        import comfy.sd
+        import comfy.utils
+
+        path = ensure_lora()
+        weights = comfy.utils.load_torch_file(path, safe_load=True)
+        patched_model, _ = comfy.sd.load_lora_for_models(model, None, weights, strength_model, 0)
+        return io.NodeOutput(patched_model)
+
+
 class QwenMultiangleExtension(ComfyExtension):
     @override
     async def get_node_list(self):
         return [
             QwenMultiangleCameraNode,
+            QwenMultiangleLoraLoader,
             QwenMultiangleCameraTranslateNode,
         ]
 
